@@ -1,0 +1,317 @@
+# Partie 2 : Suite de l'exploration des donn�es
+
+```{r}
+#Importation du fichier "delta.csv"
+data<-read.csv(file.choose(),header = T,sep = ",",dec = ".",na.strings = "")
+head(data)
+```
+
+Division des donn�es par classe :
+
+```{r}
+FirstClass<-data[which(data$First.Class==1),]
+head(FirstClass)
+```
+
+```{r}
+Economy<-data[which(data$Economy==1),]
+head(Economy)
+
+```
+
+```{r}
+EcoCom<-data[which(data$Eco.Comfort==1),]
+head(EcoCom)
+```
+
+```{r}
+Business<-data[which(data$Business==1),]
+head(Business)
+```
+
+## 2.4-Nombre de chaises classes par type dans chaque mod�le d'avion:
+
+```{r}
+pie(data$Seats..First.Class.,labels = data$Aircraft,radius = 1,main = "number of first class seats in all the airplanes")
+
+```
+```{r}
+pie(data$Seats..Business.,labels = data$Aircraft,radius = 1,main="number of business seats in all the airplanes")
+```
+```{r}
+pie(data$Seats..Economy.,labels = data$Aircraft,radius = 1,main="number of Economy seats in all the airplanes")
+
+```
+```{r}
+pie(data$Seats..Eco.Comfort.,labels = data$Aircraft,radius = 1,main="number of Eco Comfort seats in all the airplanes")
+```
+
+## 2.5-Etude des accomodations pr�sentes dans chaque classe : 
+
+```{r}
+plot(FirstClass$Aircraft,FirstClass$Power)
+```
+```{r}
+plot(FirstClass$Aircraft,FirstClass$Wifi)
+```
+
+### Calcul des ratios d'accomodations(Wifi,Power,Video,Satellite,flat Bed,Sleeper,Club) pour chaque classe
+#### First Class
+```{r}
+wifiFirstClass<-sum(FirstClass$Wifi)/length(FirstClass$Wifi)
+powerFirstClass<-sum(FirstClass$Power)/length(FirstClass$Power)
+videoFirstClass<-sum(FirstClass$Video)/length(FirstClass$Video)
+satelliteFirstClass<-sum(FirstClass$Satellite)/length(FirstClass$Satellite)
+FlatBedFirstClass<-sum(FirstClass$Flat.bed)/length(FirstClass$Flat.bed)
+SleeperFirstClass<-sum(FirstClass$Sleeper)/length(FirstClass$Sleeper)
+ClubFirstClass<-sum(FirstClass$Club)/length(FirstClass$Club)
+
+ratioFirstClass<-(wifiFirstClass+powerFirstClass+videoFirstClass+satelliteFirstClass+FlatBedFirstClass+SleeperFirstClass+ClubFirstClass)/7
+cat("Le ratio de la FirstClass est :  ",ratioFirstClass)
+```
+#### Business Class
+```{r}
+wifiBusiness<-sum(Business$Wifi)/length(Business$Wifi)
+powerBusiness<-sum(Business$Power)/length(Business$Power)
+videoBusiness<-sum(Business$Video)/length(Business$Video)
+satelliteBusiness<-sum(Business$Satellite)/length(Business$Satellite)
+FlatBedBusniss<-sum(Business$Flat.bed)/length(Business$Flat.bed)
+SleeperBusniss<-sum(Business$Sleeper)/length(Business$Sleeper)
+ClubBusiness<-sum(Business$Club)/length(Business$Club)
+ratioBusiness<-(wifiBusiness+powerBusiness+videoBusiness+satelliteBusiness+FlatBedBusniss+SleeperBusniss+ClubBusiness)/7
+cat("Le ratio de la Business Class est :  ",ratioFirstClass)
+```
+#### Economy Class
+```{r}
+wifiEco<-sum(Economy$Wifi)/length(Economy$Wifi)
+powerEco<-sum(Economy$Power)/length(Economy$Power)
+videoEco<-sum(Economy$Video)/length(Economy$Video)
+satelliteEco<-sum(Economy$Satellite)/length(Economy$Satellite)
+FlatBedEco<-sum(Economy$Flat.bed)/length(Economy$Flat.bed)
+SleeperEco<-sum(Economy$Sleeper)/length(Economy$Sleeper)
+ClubEco<-sum(Economy$Club)/length(Economy$Club)
+ratioEconomy<-(wifiEco+powerEco+videoEco+satelliteEco+FlatBedEco+SleeperEco+ClubEco)/7
+cat("Le ratio de l'economy Class est :  ",ratioFirstClass)
+```
+#### EcoComfort Class
+```{r}
+wifiEcoCom<-sum(EcoCom$Wifi)/length(EcoCom$Wifi)
+powerEcoCom<-sum(EcoCom$Power)/length(EcoCom$Power)
+videoEcoCom<-sum(EcoCom$Video)/length(EcoCom$Video)
+satelliteEcoCom<-sum(EcoCom$Satellite)/length(EcoCom$Satellite)
+FlatBedEcoCom<-sum(EcoCom$Flat.bed)/length(EcoCom$Flat.bed)
+SleeperEcoCom<-sum(EcoCom$Sleeper)/length(EcoCom$Sleeper)
+ClubEcoCom<-sum(EcoCom$Club)/length(EcoCom$Club)
+ratioEcoCom<-(wifiEcoCom+powerEcoCom+videoEcoCom+satelliteEcoCom+FlatBedEcoCom+SleeperEcoCom+ClubEcoCom)/7
+cat("Le ratio de l'EcoComfort Class est :  ",ratioFirstClass)
+```
+
+```{r, message=FALSE}
+library(plotly)
+RatioDf<-data.frame(group=c("FirstClassRatio","BusinessRatio","EconomyRatio","EconomyComRatio"),value=c(ratioFirstClass,ratioBusiness,ratioEconomy,ratioEcoCom))
+RatioDf
+p<-ggplot(RatioDf,aes(x=group,y=value,fill=group))+geom_bar(width = 1,stat = "identity")
+p
+pie<-p+coord_polar("x",start=0)
+pie
+```
+## Conclusion
+Les accomodations sont disponibles dans les classes selon cet ordre d�croissant (Business Class --> EcoComfort Class
+--> Economy Class --> First Class)
+On peut dire qu'il est plus int�ressant de consacrer plus d'espace � la classe EcoComfort qu'� la First Class
+
+## 2.6-R�partiton des chaises par classe selon leurs types :
+
+```{r}
+dfs<-data.frame(group=c('seatWidth eco','seatPitch eco'),value=c(Economy$Seat.Width..Economy.,Economy$Seat.Pitch..Economy.))
+p<-ggplot(dfs,aes(x=group,y=value,fill=group))+ geom_boxplot()
+p
+
+
+```
+
+
+```{r}
+dfss<-data.frame(group=c('seatWidth ecoCom','seatPitch ecoCom'),value=c(EcoCom$Seat.Width..Eco.Comfort.,EcoCom$Seat.Pitch..Eco.Comfort.))
+p<-ggplot(dfss,aes(x=group,y=value,fill=group))+ geom_boxplot()
+p
+```
+
+on peut voir que le seatPitch de la classe EcoComfort est plus grand que celui de la classe Economy avec un seatWidth similaire.
+
+```{r}
+dfs1<-data.frame(group=c('seatWidth business','seatPitch business'),value=c(Business$Seat.Width..Business.,Business$Seat.Pitch..Business.))
+p<-ggplot(dfs1,aes(x=group,y=value,fill=group))+ 
+  geom_boxplot()
+p
+
+```
+```{r}
+dfs2<-data.frame(group=c('seatWidth firstClass','seatPitch firstClass'),value=c(FirstClass$Seat.Width..First.Class.,FirstClass$Seat.Pitch..First.Class.))
+p<-ggplot(dfs2,aes(x=group,y=value,fill=group))+ 
+  geom_boxplot()
+p
+```
+
+On peut remarquer l'�cart tr�s important entre le SeatPitch des deux classes Business et FirstClass en effet celui de la classe Business d�passe largement celui de la FirstClass. Par contre les deux classes ont un SeatWidth simialire.
+
+```{r}
+delta<-data
+delta
+delta_1<-delta
+delta_1$Aircraft<-NULL
+delta_1
+cor(delta_1)
+```
+
+#Les corélations:
+On remarque que les colonnes Seat.Width..Club. | Seat.Pitch..Club. |  Seat..Club. et Club sont parfaitement
+corélées positivement aussi Seat.Pitch..Economy. | Seat.Width..Economy. et Sleeper
+Seats..First.Class. et Seat.Width..First.Class. et First.Class sont corélées avec Seat.Width..First.Class.
+Seat.Width..First.Class. et Seat.Pitch..First.Class. sont aussi .
+
+```{r}
+delta_1<-scale(delta_1)
+boxplot(delta_1)
+```
+
+```{r}
+delta_1<-as.data.frame(delta_1)
+plot(delta_1$Seat.Pitch..Economy.,delta_1$Seat.Width..Economy.)
+delta_1
+
+```
+```{r}
+library(ggplot2)          
+
+ggplot(delta, aes(delta_1$Seat.Pitch..Economy,delta_1$Seat.Width..Economy)) + geom_point() + scale_x_continuous("Seat.Pitch", breaks = seq(0,18.5))+ scale_y_continuous("Seat.Width", breaks = seq(0,by = 32))+ theme_bw() 
+range(delta_1$Seat.Pitch..Economy)
+range(delta_1$Seat.Width..Economy)
+
+```
+
+Pour la classe economique plus le Seat width est important plus le seat pitch est important aussi ce sont deux variables fortement corélées.
+
+```{r}
+boxplot(delta_1[,],col=c("#75FF33","#DBFF33","#FF5733"))
+
+```
+
+
+Ce graphe nous permet de visualizer la répartition des caractéristiques des avions dans notre data set.
+
+
+```{r}
+delta_2<-delta
+ggplot(delta_2, aes(delta_2$Length..ft., fill = delta_2$Range..miles)) + geom_bar()+
+  labs(title = "Range by aircraft", x = "Aircraft length", y = "Count ")
+```
+
+#Segmentation:
+#Kmeans Clustering:
+
+```{r}
+dataSeg<-data
+dataSeg$Aircraft<-NULL
+dataSeg<- scale(dataSeg)
+
+wss <- (nrow(dataSeg)-1)*sum(apply(dataSeg,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(dataSeg,centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares")
+```
+
+Cette Méthode nous permet de préciser le nombre optimale des clusters ainsi dans notre cas c'est 2 là ou il y a une différence dans la courbe.
+On utilise cette résultat et on applique K-means cluestering :
+
+```{r}
+dataSeg_1 <- kmeans(dataSeg, 2)
+aggregate(dataSeg,by=list(dataSeg_1$cluster),FUN=mean)
+dataSeg <- data.frame(dataSeg, dataSeg_1$cluster)
+library(cluster)
+clusplot(dataSeg, dataSeg_1$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+
+```
+
+Cette segmentation décrit notre data ser avec un pourcentage de 66.61 des points représentatifs.
+
+#Model Based Clustering:
+
+```{r}
+library(mclust)
+data_mc<-data
+data_mc$Aircraft<-NULL
+data_mc <- Mclust(data)
+
+#plot(data_mc)
+```
+```{r}
+summary(data_mc)
+```
+
+de meme pour cette méthode qui nous renvois les clusters selon le Model based Clustering on a eu 2 clusters.
+#CAH
+
+```{r}
+data_h<-data
+data_h$Aircraft<-NULL
+data_h1 <- dist(data_h, method = "euclidean")
+data_h2 <- hclust(data_h1, method="complete") 
+plot(data_h2)
+
+```
+
+Cette Méthode nous donne la main à choisir le clustering qui nous convient et d'aprés ce graphe on peut déduire que 
+la meilleure solution est de choisir deux clusters qui sont claires à identifier.
+
+```{r fig.height=5, fig.width=10, echo=FALSE, message=FALSE, warning=FALSE}
+library(FactoMineR)
+library(factoextra)
+library(flashClust)
+library(RColorBrewer)
+library(NbClust)
+avion_db<-data
+avion_db$Aircraft<-NULL
+res.hcpc <- HCPC(as.data.frame(avion_db),metric="euclidean",method="ward",nb.clust=2,graph = FALSE,max = 2)
+plot(res.hcpc, choice = "tree")
+
+```
+
+```{r fig.height=5, fig.width=10, echo=FALSE, message=FALSE, warning=FALSE}
+plot(res.hcpc, choice = "3D.map")
+```
+
+et en fin, aprés les manipulations qu'on a effectué on peut affirmer que notre data set se divise parfaitement en deux clusters qu'on va définir ses caractéristique dans la partie suivantes.
+
+```{r}
+library(lattice)
+ds <- data
+ds[1:23]<-NULL
+parallelplot(~ds, group = res.hcpc$data.clust$clust, data = ds, horizontal.axis = FALSE,
+             auto.key = TRUE)
+```
+
+##Intérprétation du graph de comparaison:
+D'aprés le graph qu'on a obtenu on peut spécifier chacun des deux clusters :
+le premier cluster des avions contient Wifi, Video, power,satellite, club et ils sont classés comme first class ,Business Eco et comfort Economy.
+Concernant le deuxiéme cluster on a Video,Power,Flat bed,sleeper,et sont classés comme Business eco et EcoComfort.
+ce qui montre que l'ensemble des avions  de la Tunisair manque la divérsité des services qui doivent etre bien répartis sur tout l'ensemble d'avions.
+Ce qui prouve le besion d'améliorer et travailler plus sur ce cote ainsi on peut en baser pour des futurs achat d'avions ou amélioration du services.
+
+#Les régles qui decrivent les caractéristiques des avions de notre data set:
+
+```{r}
+library(arules)
+dataT<-data
+dataT[1:23]<-NULL
+dataT<-as.matrix.data.frame(dataT)
+dataT<-as(dataT,"transactions")
+
+data_1<-apriori(dataT,parameter = new("APparameter",support=0.1,confidence=0.5))
+
+data_2<-sort(data_1,decreasing = T,by="lift")
+
+data_3<-inspect(head(data_2,n=50))
+
+library(arulesViz)
+plot(data_2,engine = "plotly")
+```
